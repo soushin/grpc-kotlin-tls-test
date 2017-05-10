@@ -1,0 +1,24 @@
+FROM java:openjdk-8
+
+COPY . /grpc-server
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y ca-certificates libc6 wget && \
+    echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && \
+    rm -rf /etc/localtime && \
+    ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
+    \
+    mkdir -p /var/lib && \
+    wget -q -O /var/lib/jetty-alpn-agent.jar https://repo.maven.apache.org/maven2/org/mortbay/jetty/alpn/jetty-alpn-agent/2.0.6/jetty-alpn-agent-2.0.6.jar && \
+    \
+    cd /grpc-server && ./gradlew clean && \
+    cd /grpc-server && rm -rf ~/.gradle && ./gradlew clean generateProto build -x test && \
+    mkdir -p /usr/local/grpc-server/lib && \
+    cp -R /grpc-server/build/libs/* /usr/local/grpc-server/lib/ && \
+    rm -rf /grpc-server
+
+ENTRYPOINT java $JAVA_OPTS -javaagent:/var/lib/jetty-alpn-agent.jar -jar /usr/local/grpc-server/lib/grpc-server.jar
+
+EXPOSE 8080 8080
+EXPOSE 50051 50051

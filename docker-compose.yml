@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  server_openssl:
+    container_name: grpc_server_openssl
+    build:
+      context: ./server
+      dockerfile: Dockerfile.openssl
+    ports:
+      - 8081:8080
+      - 50052:50051
+    volumes:
+      - ./server/cert:/cert
+    environment:
+      GRPC_SERVER_OPENSSL: "true"
+
+  server_jdk:
+    container_name: grpc_server_jdk
+    build:
+      context: ./server
+      dockerfile: Dockerfile.jdk
+    ports:
+      - 8082:8080
+      - 50053:50051
+    volumes:
+      - ./server/cert:/cert
+    environment:
+      GRPC_SERVER_OPENSSL: "false"
