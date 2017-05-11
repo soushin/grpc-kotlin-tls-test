@@ -42,6 +42,8 @@ then confirm to request over TLS with OpenSSL.
 {"data":"echo \hello/, TSL with OpenSSL%"}%
 ```
 
+`/echo` endpoint handles connect to gRPC server.
+
 **Confirm grpc-server TSL with JDK**
 
 ```running-client-server shell
@@ -53,3 +55,5 @@ then confirm to request over TLS with JDK.
 ➜  ~ curl -XGET http://localhost:8080/echo
 {"data":"echo \hello/, TSL with JDK"}%
 ```
+
+`/echo` endpoint handles connect to gRPC server.

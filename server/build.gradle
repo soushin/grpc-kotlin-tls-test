@@ -12,16 +12,18 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.1"
+        classpath "com.google.gradle:osdetector-gradle-plugin:1.4.0"
     }
 }
 
-apply plugin: 'com.google.protobuf'
-apply plugin: 'java'
-apply plugin: 'kotlin'
+apply plugin: "com.google.protobuf"
+apply plugin: "java"
+apply plugin: "kotlin"
 apply plugin: "kotlin-spring"
 apply plugin: "org.springframework.boot"
-apply plugin: 'application'
-apply plugin: 'idea'
+apply plugin: "application"
+apply plugin: "idea"
+apply plugin: "com.google.osdetector"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -49,6 +51,11 @@ sourceSets {
 
 def grpcVersion = '1.2.0'
 
+def tcnative_classifier = osdetector.classifier;
+if (osdetector.os == "linux" && osdetector.release.isLike("fedora")) {
+    tcnative_classifier += "-fedora";
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
@@ -58,7 +65,7 @@ dependencies {
     compile "io.grpc:grpc-stub:${grpcVersion}"
     compile "com.google.api.grpc:googleapis-common-protos:0.0.3"
     // grpc-tsl
-    compile 'io.netty:netty-tcnative-boringssl-static:1.1.33.Fork26'
+    compile "io.netty:netty-tcnative:1.1.33.Fork26:" + tcnative_classifier
 
     // spring-boot
     compile "org.springframework.boot:spring-boot-starter-web:$springboot_version"
